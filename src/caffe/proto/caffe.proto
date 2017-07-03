@@ -308,7 +308,9 @@ message ParamSpec {
 // NOTE
 // Update the next available ID when you add a new LayerParameter field.
 //
-// LayerParameter next available layer-specific ID: 147 (last added: recurrent_param)
+//// LayerParameter next available layer-specific ID: 147 (last added: recurrent_param)
+//// LayerParameter next available layer-specific ID: 148 (last added: bn_param)
+// LayerParameter next available layer-specific ID: 149 (last added: interp_param)
 message LayerParameter {
   optional string name = 1; // the layer name
   optional string type = 2; // the layer type
@@ -363,6 +365,7 @@ message LayerParameter {
   optional AccuracyParameter accuracy_param = 102;
   optional ArgMaxParameter argmax_param = 103;
   optional BatchNormParameter batch_norm_param = 139;
+  optional BNParameter bn_param = 147;                            //new
   optional BiasParameter bias_param = 141;
   optional ConcatParameter concat_param = 104;
   optional ContrastiveLossParameter contrastive_loss_param = 105;
@@ -383,6 +386,7 @@ message LayerParameter {
   optional InfogainLossParameter infogain_loss_param = 116;
   optional InnerProductParameter inner_product_param = 117;
   optional InputParameter input_param = 143;
+  optional InterpParameter interp_param = 148;                    // new
   optional LogParameter log_param = 134;
   optional LRNParameter lrn_param = 118;
   optional MemoryDataParameter memory_data_param = 119;
@@ -521,6 +525,23 @@ message BatchNormParameter {
   // Small value to add to the variance estimate so that we don't divide by
   // zero.
   optional float eps = 3 [default = 1e-5];
+}
+
+message BNParameter {
+  optional FillerParameter slope_filler = 1;
+  optional FillerParameter bias_filler = 2;
+  optional float momentum = 3 [default = 0.9];
+  optional float eps = 4 [default = 1e-5];
+  // If true, will use the moving average mean and std for training and test.
+  // Will override the lr_param and freeze all the parameters.
+  // Make sure to initialize the layer properly with pretrained parameters.
+  optional bool frozen = 5 [default = false];
+  enum Engine {
+    DEFAULT = 0;
+    CAFFE = 1;
+    CUDNN = 2;
+  }
+  optional Engine engine = 6 [default = DEFAULT];
 }
 
 message BiasParameter {
@@ -833,6 +854,15 @@ message InnerProductParameter {
   // of the weight matrix. The weight matrix itself is not going to be transposed
   // but rather the transfer flag of operations will be toggled accordingly.
   optional bool transpose = 6 [default = false];
+}
+
+message InterpParameter {
+  optional int32 height = 1 [default = 0]; // Height of output
+  optional int32 width = 2 [default = 0]; // Width of output
+  optional int32 zoom_factor = 3 [default = 1]; // zoom factor
+  optional int32 shrink_factor = 4 [default = 1]; // shrink factor
+  optional int32 pad_beg = 5 [default = 0]; // padding at begin of input
+  optional int32 pad_end = 6 [default = 0]; // padding at end of input
 }
 
 message InputParameter {
