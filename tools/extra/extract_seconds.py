@@ -47,6 +47,9 @@ def extract_seconds(input_file, output_file):
         lines = f.readlines()
     log_created_year = get_log_created_year(input_file)
     start_datetime = get_start_time(lines, log_created_year)
+    # if not start_datetime:
+    #     import ipdb
+    #     ipdb.set_trace()
     assert start_datetime, 'Start time not found'
 
     last_dt = start_datetime
